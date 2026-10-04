@@ -32,13 +32,24 @@ export function VehicleCard({ vehicle, index = 0 }: VehicleCardProps) {
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-[#1a1a1a]">
           {vehicle.cover_image_url ? (
-            <Image
-              src={vehicle.cover_image_url}
-              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-              fill
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              sizes="50vw"
-            />
+            vehicle.cover_image_url.match(/\.(mp4|webm|ogg)$/i) ? (
+              <video
+                src={vehicle.cover_image_url}
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                muted
+                playsInline
+                autoPlay
+                loop
+              />
+            ) : (
+              <Image
+                src={vehicle.cover_image_url}
+                alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                fill
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                sizes="50vw"
+              />
+            )
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-gray-700">
               <span className="text-sm font-medium uppercase tracking-widest">No Image</span>

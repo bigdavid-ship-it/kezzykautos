@@ -64,7 +64,11 @@ export default async function AdminVehiclesPage() {
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded bg-bg-primary overflow-hidden shrink-0 relative">
                           {vehicle.cover_image_url ? (
-                            <Image src={vehicle.cover_image_url} alt="" fill className="object-cover" />
+                            vehicle.cover_image_url.match(/\.(mp4|webm|ogg)$/i) ? (
+                              <video src={vehicle.cover_image_url} className="w-full h-full object-cover" muted playsInline />
+                            ) : (
+                              <Image src={vehicle.cover_image_url} alt="" fill className="object-cover" />
+                            )
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-text-muted text-xs">No img</div>
                           )}
