@@ -81,6 +81,8 @@ export function VehicleForm({ initialData }: { initialData?: any }) {
       let finalPayload: any = {
         ...form,
         slug,
+        // Set the primary image URL
+        cover_image_url: images.length > 0 ? images[0].url : null,
         // Flatten specifications into top-level columns to match DB
         // Using safe defaults instead of null to prevent NOT NULL constraint errors
         mileage: form.specifications?.mileage || 0,
