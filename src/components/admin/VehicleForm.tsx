@@ -78,11 +78,37 @@ export function VehicleForm({ initialData }: { initialData?: any }) {
       const supabase = createClient()
       const slug = generateSlug(form.make, form.model, form.year)
 
+      // 1. Upload any new images to Supabase Storage
+      const processedImages = await Promise.all(
+        images.map(async (img) => {
+          if (img.isNew && img.file) {
+            const fileExt = img.file.name.split('.').pop()
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+            
+            const { error: uploadError, data } = await supabase.storage
+              .from('vehicles')
+              .upload(fileName, img.file)
+              
+            if (uploadError) {
+              console.error('Upload error:', uploadError)
+              throw new Error(`Failed to upload image: ${uploadError.message}`)
+            }
+            
+            const { data: publicUrlData } = supabase.storage
+              .from('vehicles')
+              .getPublicUrl(fileName)
+              
+            return { ...img, url: publicUrlData.publicUrl, isNew: false, file: undefined }
+          }
+          return img
+        })
+      )
+
       let finalPayload: any = {
         ...form,
         slug,
-        // Set the primary image URL
-        cover_image_url: images.length > 0 ? images[0].url : null,
+        // Set the primary image URL from the successfully uploaded images
+        cover_image_url: processedImages.length > 0 ? processedImages[0].url : null,
         // Flatten specifications into top-level columns to match DB
         // Using safe defaults instead of null to prevent NOT NULL constraint errors
         mileage: form.specifications?.mileage || 0,
