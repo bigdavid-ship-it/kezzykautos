@@ -61,10 +61,7 @@ export default async function VehicleDetailsPage({
   // Fetch vehicle details with media
   const { data: vehicle, error } = await supabase
     .from('vehicles')
-    .select(`
-      *,
-      vehicle_media (*)
-    `)
+    .select('*')
     .eq('slug', params.slug)
     .single()
 
@@ -72,6 +69,19 @@ export default async function VehicleDetailsPage({
     // If not found, gracefully return 404
     notFound()
   }
+
+  // Build gallery array for the Gallery component
+  const galleryUrls = vehicle.gallery || []
+  if (vehicle.cover_image_url && !galleryUrls.includes(vehicle.cover_image_url)) {
+    galleryUrls.unshift(vehicle.cover_image_url)
+  }
+
+  const media = galleryUrls.map((url: string, idx: number) => ({
+    id: `media-${idx}`,
+    url: url,
+    type: 'image',
+    sort_order: idx
+  }))
 
   const isSold = vehicle.availability === 'Sold'
   const vehicleName = `${vehicle.year} ${vehicle.make} ${vehicle.model}`
@@ -103,7 +113,7 @@ export default async function VehicleDetailsPage({
           {/* Left: Gallery */}
           <div className="min-w-0 animate-fade-in-up">
             <VehicleGallery
-              media={vehicle.vehicle_media || []}
+              media={media}
               coverImage={vehicle.cover_image_url}
               vehicleName={vehicleName}
             />

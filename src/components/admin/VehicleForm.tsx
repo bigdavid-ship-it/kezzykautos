@@ -107,8 +107,10 @@ export function VehicleForm({ initialData }: { initialData?: any }) {
       let finalPayload: any = {
         ...form,
         slug,
-        // Set the primary image URL from the successfully uploaded images
+        // Set the primary image URL from the first uploaded image
         cover_image_url: processedImages.length > 0 ? processedImages[0].url : null,
+        // Save ALL image URLs into the gallery array
+        gallery: processedImages.map(img => img.url),
         // Flatten specifications into top-level columns to match DB
         // Using safe defaults instead of null to prevent NOT NULL constraint errors
         mileage: form.specifications?.mileage || 0,

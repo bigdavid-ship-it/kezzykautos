@@ -17,10 +17,7 @@ export default async function EditVehiclePage({
   
   const { data: vehicle, error } = await supabase
     .from('vehicles')
-    .select(`
-      *,
-      vehicle_media (*)
-    `)
+    .select('*')
     .eq('id', params.id)
     .single()
 
@@ -28,15 +25,20 @@ export default async function EditVehiclePage({
     notFound()
   }
 
+  // Build the media array from the gallery column
+  const galleryUrls = vehicle.gallery || []
+  if (vehicle.cover_image_url && !galleryUrls.includes(vehicle.cover_image_url)) {
+    galleryUrls.unshift(vehicle.cover_image_url) // Ensure cover is in the list
+  }
+
   // Format data for the form
   const initialData = {
     ...vehicle,
-    // Add media to initial data so MediaUploader can render it
-    media: vehicle.vehicle_media?.map((m: any) => ({
-      id: m.id,
-      url: m.url,
-      isCover: vehicle.cover_image_url === m.url,
-    })) || []
+    media: galleryUrls.map((url: string, index: number) => ({
+      id: `media-${index}`,
+      url: url,
+      isCover: vehicle.cover_image_url === url,
+    }))
   }
 
   return (
