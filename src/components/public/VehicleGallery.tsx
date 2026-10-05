@@ -54,14 +54,25 @@ export function VehicleGallery({ media, coverImage, vehicleName }: VehicleGaller
           className="relative aspect-[16/9] bg-bg-elevated rounded-card overflow-hidden cursor-pointer"
           onClick={() => setIsLightboxOpen(true)}
         >
-          <Image
-            src={uniqueImages[activeIndex].url}
-            alt={uniqueImages[activeIndex].alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 60vw"
-            priority
-          />
+          {uniqueImages[activeIndex].url.match(/\.(mp4|webm|ogg)$/i) ? (
+            <video
+              src={uniqueImages[activeIndex].url}
+              className="w-full h-full object-cover"
+              muted
+              playsInline
+              autoPlay
+              loop
+            />
+          ) : (
+            <Image
+              src={uniqueImages[activeIndex].url}
+              alt={uniqueImages[activeIndex].alt}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 60vw"
+              priority
+            />
+          )}
 
           {/* Zoom icon overlay */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
@@ -112,13 +123,22 @@ export function VehicleGallery({ media, coverImage, vehicleName }: VehicleGaller
               )}
               aria-label={`View image ${index + 1}`}
             >
-              <Image
-                src={img.url}
-                alt={img.alt}
-                fill
-                className="object-cover"
-                sizes="96px"
-              />
+              {img.url.match(/\.(mp4|webm|ogg)$/i) ? (
+                <video
+                  src={img.url}
+                  className="w-full h-full object-cover"
+                  muted
+                  playsInline
+                />
+              ) : (
+                <Image
+                  src={img.url}
+                  alt={img.alt}
+                  fill
+                  className="object-cover"
+                  sizes="96px"
+                />
+              )}
             </button>
           ))}
         </div>
@@ -144,13 +164,23 @@ export function VehicleGallery({ media, coverImage, vehicleName }: VehicleGaller
             className="relative w-full h-full max-w-5xl max-h-[85vh] m-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
-              src={uniqueImages[activeIndex].url}
-              alt={uniqueImages[activeIndex].alt}
-              fill
-              className="object-contain"
-              sizes="100vw"
-            />
+            {uniqueImages[activeIndex].url.match(/\.(mp4|webm|ogg)$/i) ? (
+              <video
+                src={uniqueImages[activeIndex].url}
+                className="w-full h-full object-contain"
+                controls
+                autoPlay
+                playsInline
+              />
+            ) : (
+              <Image
+                src={uniqueImages[activeIndex].url}
+                alt={uniqueImages[activeIndex].alt}
+                fill
+                className="object-contain"
+                sizes="100vw"
+              />
+            )}
           </div>
 
           {/* Lightbox navigation */}
