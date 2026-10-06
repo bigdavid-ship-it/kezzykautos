@@ -104,11 +104,14 @@ export function VehicleForm({ initialData }: { initialData?: any }) {
         })
       )
 
+      // Find the image marked as cover, or fallback to the first one
+      const coverImage = processedImages.find(img => img.isCover) || processedImages[0]
+
       let finalPayload: any = {
         ...form,
         slug,
-        // Set the primary image URL from the first uploaded image
-        cover_image_url: processedImages.length > 0 ? processedImages[0].url : null,
+        // Set the primary image URL
+        cover_image_url: coverImage ? coverImage.url : null,
         // Save ALL image URLs into the gallery array
         gallery: processedImages.map(img => img.url),
         // Flatten specifications into top-level columns to match DB
