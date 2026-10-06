@@ -65,12 +65,12 @@ export function MediaUploader({
       return
     }
 
-    const newMediaItems = newFiles.map(file => ({
+    const newMediaItems = newFiles.map((file, index) => ({
       id: Math.random().toString(36).substring(7),
       url: URL.createObjectURL(file),
       file,
       isNew: true,
-      isCover: media.length === 0 // First image is cover by default
+      isCover: media.length === 0 && index === 0 // Only the very first file uploaded gets to be cover
     }))
 
     const updatedMedia = [...media, ...newMediaItems]
