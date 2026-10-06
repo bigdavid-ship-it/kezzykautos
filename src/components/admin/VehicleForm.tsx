@@ -126,8 +126,6 @@ export function VehicleForm({ initialData }: { initialData?: any }) {
 
       // Drop fields that do not exist in the Supabase schema
       delete finalPayload.status
-      delete finalPayload.previous_price
-      delete finalPayload.negotiable
       delete finalPayload.specifications
       delete finalPayload.title
 

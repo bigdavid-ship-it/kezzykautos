@@ -144,7 +144,20 @@ export default async function VehicleDetailsPage({
                 <h1 className="text-3xl lg:text-4xl font-bold text-white leading-tight break-words">
                   {vehicleName}
                 </h1>
-                <p className="text-3xl font-bold text-accent">{formatPrice(vehicle.price)}</p>
+                
+                <div className="flex flex-col gap-1">
+                  {vehicle.previous_price && vehicle.previous_price > vehicle.price && (
+                    <span className="text-lg font-medium text-text-muted line-through">
+                      {formatPrice(vehicle.previous_price)}
+                    </span>
+                  )}
+                  <div className="flex items-center gap-3">
+                    <p className="text-3xl font-bold text-accent">{formatPrice(vehicle.price)}</p>
+                    {vehicle.negotiable && (
+                      <Badge variant="outline" className="border-accent/30 text-accent bg-accent/5">Negotiable</Badge>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Key specs — 2 columns, icon + label + value */}
