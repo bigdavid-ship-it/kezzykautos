@@ -8,6 +8,8 @@ export type WebsiteSettings = {
   whatsapp_number: string;
   tiktok_url: string;
   facebook_url: string;
+  map_latitude: string;
+  map_longitude: string;
 }
 
 export const getSettings = async (): Promise<WebsiteSettings | null> => {

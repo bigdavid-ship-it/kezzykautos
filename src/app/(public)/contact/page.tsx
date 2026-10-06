@@ -36,7 +36,9 @@ export default function ContactPage() {
   const email = settings ? settings.contact_email : fallbackContact.email;
   const address = settings ? settings.address : fallbackContact.address;
   const whatsappNumber = settings ? settings.whatsapp_number : fallbackContact.whatsapp;
-  
+  const mapLat = settings && settings.map_latitude ? parseFloat(settings.map_latitude) : 6.5244;
+  const mapLng = settings && settings.map_longitude ? parseFloat(settings.map_longitude) : 3.3792;
+
   const activeSocials: Record<string, string> = {
     ...(settings ? (settings.tiktok_url ? { tiktok: settings.tiktok_url } : {}) : { tiktok: fallbackSocial.tiktok }),
     ...(settings ? (settings.facebook_url ? { facebook: settings.facebook_url } : {}) : { facebook: fallbackSocial.facebook }),
@@ -272,8 +274,8 @@ export default function ContactPage() {
           <h3 className="text-sm tracking-[0.2em] uppercase text-gray-500 font-medium">Find Us</h3>
           <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-4 md:p-8">
             <Map 
-              lat={6.5244} 
-              lng={3.3792} 
+              lat={mapLat} 
+              lng={mapLng} 
               title="Kezzyk Autos" 
               address={address} 
               showDirections={true}

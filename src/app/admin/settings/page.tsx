@@ -15,6 +15,8 @@ const settingsSchema = z.object({
   whatsappNumber: z.string().min(10),
   tiktokUrl: z.string().url().or(z.literal('')),
   facebookUrl: z.string().url().or(z.literal('')),
+  mapLatitude: z.string().or(z.literal('')),
+  mapLongitude: z.string().or(z.literal('')),
 })
 
 type SettingsFormData = z.infer<typeof settingsSchema>
@@ -32,6 +34,8 @@ export default function AdminSettingsPage() {
       whatsappNumber: '',
       tiktokUrl: '',
       facebookUrl: '',
+      mapLatitude: '',
+      mapLongitude: '',
     },
   })
 
@@ -46,6 +50,8 @@ export default function AdminSettingsPage() {
           whatsappNumber: data.whatsapp_number || '',
           tiktokUrl: data.tiktok_url || '',
           facebookUrl: data.facebook_url || '',
+          mapLatitude: data.map_latitude || '',
+          mapLongitude: data.map_longitude || '',
         })
       }
       setIsLoading(false)
@@ -63,6 +69,8 @@ export default function AdminSettingsPage() {
         whatsapp_number: data.whatsappNumber,
         tiktok_url: data.tiktokUrl,
         facebook_url: data.facebookUrl,
+        map_latitude: data.mapLatitude,
+        map_longitude: data.mapLongitude,
       })
       alert('Settings saved successfully!')
     } catch (error) {
@@ -94,6 +102,14 @@ export default function AdminSettingsPage() {
             <div className="md:col-span-2">
               <Textarea label="Physical Address" {...register('address')} error={errors.address?.message} />
             </div>
+          </div>
+        </div>
+
+        <div className="bg-bg-surface border border-border rounded-card p-6">
+          <h3 className="text-subheading text-text-primary mb-6">Map Location (Coordinates)</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input label="Latitude" {...register('mapLatitude')} error={errors.mapLatitude?.message} helperText="Go to Google Maps, right click your location, and copy the first number (e.g. 6.5244)" />
+            <Input label="Longitude" {...register('mapLongitude')} error={errors.mapLongitude?.message} helperText="Copy the second number (e.g. 3.3792)" />
           </div>
         </div>
 
