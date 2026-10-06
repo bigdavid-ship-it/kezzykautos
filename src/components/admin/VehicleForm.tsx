@@ -132,6 +132,8 @@ export function VehicleForm({ initialData }: { initialData?: any }) {
 
       // Clean empty strings for numeric/optional fields
       if (finalPayload.price === '' || finalPayload.price == null) finalPayload.price = 0
+      if (finalPayload.previous_price === '' || finalPayload.previous_price == null) finalPayload.previous_price = null
+      if (finalPayload.mileage === '' || finalPayload.mileage == null) finalPayload.mileage = null
       if (finalPayload.year === '' || finalPayload.year == null) finalPayload.year = new Date().getFullYear()
       if (!finalPayload.condition) finalPayload.condition = 'Nigerian Used'
       if (!finalPayload.location) finalPayload.location = 'Lagos'
