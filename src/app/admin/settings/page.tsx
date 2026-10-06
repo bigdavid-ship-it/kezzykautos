@@ -68,11 +68,32 @@ export default function AdminSettingsPage() {
       // Auto-geocode the physical address!
       if (data.address) {
         try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(data.address)}&format=json&limit=1`);
-          const geocodeData = await res.json();
-          if (geocodeData && geocodeData.length > 0) {
-            finalLat = geocodeData[0].lat;
-            finalLng = geocodeData[0].lon;
+          const tryGeocode = async (query: string) => {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`);
+            const geocodeData = await res.json();
+            if (geocodeData && geocodeData.length > 0) {
+              return { lat: geocodeData[0].lat, lon: geocodeData[0].lon };
+            }
+            return null;
+          }
+
+          // Try full address first
+          let coords = await tryGeocode(data.address);
+          
+          // If that fails (often happens with very specific Nigerian street addresses on free maps), 
+          // try fallback to just the city/state
+          if (!coords) {
+            const parts = data.address.split(',').map(p => p.trim());
+            if (parts.length > 1) {
+              // Try the last two parts (e.g., "Enugu, Nigeria")
+              const fallbackQuery = parts.slice(-2).join(', ');
+              coords = await tryGeocode(fallbackQuery);
+            }
+          }
+
+          if (coords) {
+            finalLat = coords.lat;
+            finalLng = coords.lon;
           }
         } catch (e) {
           console.error('Geocoding failed:', e);
