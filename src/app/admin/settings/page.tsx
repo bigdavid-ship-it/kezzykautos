@@ -62,6 +62,23 @@ export default function AdminSettingsPage() {
   const onSubmit = async (data: SettingsFormData) => {
     setIsSubmitting(true)
     try {
+      let finalLat = data.mapLatitude;
+      let finalLng = data.mapLongitude;
+
+      // Auto-geocode the physical address!
+      if (data.address) {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(data.address)}&format=json&limit=1`);
+          const geocodeData = await res.json();
+          if (geocodeData && geocodeData.length > 0) {
+            finalLat = geocodeData[0].lat;
+            finalLng = geocodeData[0].lon;
+          }
+        } catch (e) {
+          console.error('Geocoding failed:', e);
+        }
+      }
+
       await updateSettings({
         contact_email: data.contactEmail,
         contact_phone: data.contactPhone,
@@ -69,8 +86,8 @@ export default function AdminSettingsPage() {
         whatsapp_number: data.whatsappNumber,
         tiktok_url: data.tiktokUrl,
         facebook_url: data.facebookUrl,
-        map_latitude: data.mapLatitude,
-        map_longitude: data.mapLongitude,
+        map_latitude: finalLat,
+        map_longitude: finalLng,
       })
       alert('Settings saved successfully!')
     } catch (error) {
@@ -102,14 +119,6 @@ export default function AdminSettingsPage() {
             <div className="md:col-span-2">
               <Textarea label="Physical Address" {...register('address')} error={errors.address?.message} />
             </div>
-          </div>
-        </div>
-
-        <div className="bg-bg-surface border border-border rounded-card p-6">
-          <h3 className="text-subheading text-text-primary mb-6">Map Location (Coordinates)</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input label="Latitude" {...register('mapLatitude')} error={errors.mapLatitude?.message} helperText="Go to Google Maps, right click your location, and copy the first number (e.g. 6.5244)" />
-            <Input label="Longitude" {...register('mapLongitude')} error={errors.mapLongitude?.message} helperText="Copy the second number (e.g. 3.3792)" />
           </div>
         </div>
 
