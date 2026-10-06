@@ -15,11 +15,15 @@ export interface Vehicle {
   body_type: string
   condition: string
   color: string | null
+  interior_color: string | null
   location: string | null
   description: string | null
   features: string[] | null
   availability: 'Available' | 'Sold' | 'Reserved' | 'Coming Soon'
   featured: boolean
+  negotiable: boolean | null
+  previous_price: number | null
+  gallery: string[] | null
   cover_image_url: string | null
   video_url: string | null
   slug: string
