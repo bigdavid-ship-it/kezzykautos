@@ -37,7 +37,8 @@ export function VehicleSpecs({ vehicle }: VehicleSpecsProps) {
     { icon: Zap, label: 'Engine', value: vehicle.engine || 'N/A' },
     { icon: Car, label: 'Body Type', value: vehicle.body_type },
     { icon: Shield, label: 'Condition', value: vehicle.condition },
-    { icon: Palette, label: 'Color', value: vehicle.color || 'N/A' },
+    { icon: Palette, label: 'Exterior Color', value: vehicle.color || 'N/A' },
+    { icon: Palette, label: 'Interior Color', value: vehicle.interior_color || 'N/A' },
     { icon: MapPin, label: 'Location', value: vehicle.location || 'N/A' },
     { icon: CircleDot, label: 'Availability', value: vehicle.availability },
   ].filter((s) => s.value && s.value !== 'N/A')

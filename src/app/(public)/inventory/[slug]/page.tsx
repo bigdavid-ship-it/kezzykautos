@@ -95,7 +95,8 @@ export default async function VehicleDetailsPage({
     { icon: Cog, label: 'Transmission', value: vehicle.transmission },
     { icon: Fuel, label: 'Fuel', value: vehicle.fuel_type },
     { icon: Car, label: 'Body', value: vehicle.body_type },
-    { icon: Palette, label: 'Color', value: vehicle.color },
+    { icon: Palette, label: 'Exterior Color', value: vehicle.color },
+    { icon: Palette, label: 'Interior Color', value: vehicle.interior_color },
   ].filter((s) => s.value)
 
   return (

@@ -122,6 +122,7 @@ export function VehicleForm({ initialData }: { initialData?: any }) {
         engine: form.specifications?.engine || '',
         body_type: form.specifications?.body_type || 'Sedan',
         color: form.specifications?.color || '',
+        interior_color: form.specifications?.interior_color || '',
       }
 
       // Drop fields that do not exist in the Supabase schema
@@ -257,7 +258,10 @@ export function VehicleForm({ initialData }: { initialData?: any }) {
             <Select label="Body Type" value={specs.body_type || ''} onChange={e => updateSpec('body_type', e.target.value)} options={VEHICLE_BODY_TYPES.map(t => ({ label: t, value: t }))} />
           </div>
           <div className="space-y-2">
-            <Input label="Color" value={specs.color || ''} onChange={e => updateSpec('color', e.target.value)} placeholder="e.g. Black" />
+            <Input label="Exterior Color" value={specs.color || ''} onChange={e => updateSpec('color', e.target.value)} placeholder="e.g. Black" />
+          </div>
+          <div className="space-y-2">
+            <Input label="Interior Color" value={specs.interior_color || ''} onChange={e => updateSpec('interior_color', e.target.value)} placeholder="e.g. Beige Leather" />
           </div>
         </div>
       </section>
