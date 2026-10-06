@@ -34,12 +34,13 @@ export function VehicleCard({ vehicle, index = 0 }: VehicleCardProps) {
           {vehicle.cover_image_url ? (
             vehicle.cover_image_url.match(/\.(mp4|webm|ogg)$/i) ? (
               <video
-                src={vehicle.cover_image_url}
+                src={`${vehicle.cover_image_url}#t=0.001`}
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 muted
                 playsInline
                 autoPlay
                 loop
+                preload="metadata"
               />
             ) : (
               <Image

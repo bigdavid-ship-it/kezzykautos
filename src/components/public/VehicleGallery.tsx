@@ -56,12 +56,13 @@ export function VehicleGallery({ media, coverImage, vehicleName }: VehicleGaller
         >
           {uniqueImages[activeIndex].url.match(/\.(mp4|webm|ogg)$/i) ? (
             <video
-              src={uniqueImages[activeIndex].url}
+              src={`${uniqueImages[activeIndex].url}#t=0.001`}
               className="w-full h-full object-cover"
               muted
               playsInline
               autoPlay
               loop
+              preload="metadata"
             />
           ) : (
             <Image
@@ -125,10 +126,11 @@ export function VehicleGallery({ media, coverImage, vehicleName }: VehicleGaller
             >
               {img.url.match(/\.(mp4|webm|ogg)$/i) ? (
                 <video
-                  src={img.url}
+                  src={`${img.url}#t=0.001`}
                   className="w-full h-full object-cover"
                   muted
                   playsInline
+                  preload="metadata"
                 />
               ) : (
                 <Image

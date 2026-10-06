@@ -68,7 +68,7 @@ export default async function AdminVehiclesPage() {
                         <div className="w-12 h-12 rounded bg-bg-primary overflow-hidden shrink-0 relative">
                           {vehicle.cover_image_url ? (
                             vehicle.cover_image_url.match(/\.(mp4|webm|ogg)$/i) ? (
-                              <video src={vehicle.cover_image_url} className="w-full h-full object-cover" muted playsInline />
+                              <video src={`${vehicle.cover_image_url}#t=0.001`} className="w-full h-full object-cover" muted playsInline preload="metadata" />
                             ) : (
                               <Image src={vehicle.cover_image_url} alt="" fill className="object-cover" />
                             )
