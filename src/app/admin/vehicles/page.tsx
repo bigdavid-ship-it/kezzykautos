@@ -9,6 +9,7 @@ import { formatPrice } from '@/lib/constants'
 import { formatDate } from '@/lib/utils'
 import { Plus, Edit2, Trash2, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
+import { DeleteVehicleButton } from '@/components/admin/DeleteVehicleButton'
 
 export const metadata = {
   title: 'Manage Vehicles | Kezzyk Autos Admin',
@@ -121,6 +122,7 @@ export default async function AdminVehiclesPage() {
                         >
                           <Edit2 className="w-4 h-4" />
                         </Link>
+                        <DeleteVehicleButton id={vehicle.id} vehicleName={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} />
                       </div>
                     </td>
                   </tr>

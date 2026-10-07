@@ -169,13 +169,36 @@ export function VehicleForm({ initialData }: { initialData?: any }) {
   return (
     <div className="space-y-6">
       {/* Header Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-3 mb-6">
-        <Button variant="outline" className="border-border text-text-primary" onClick={() => handleSave('draft')} disabled={saving}>
-          Save as Draft
-        </Button>
-        <Button onClick={() => handleSave('published')} disabled={saving} className="bg-accent hover:bg-accent/90 text-white">
-          <Save className="h-4 w-4 mr-2" /> {saving ? 'Saving...' : 'Publish Vehicle'}
-        </Button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+        <div>
+          {initialData?.id && (
+            <Button 
+              type="button"
+              variant="outline" 
+              className="border-status-error text-status-error hover:bg-status-error/10 hover:text-status-error"
+              onClick={async () => {
+                if (window.confirm(`Delete ${form.year} ${form.make} ${form.model}? This cannot be undone.`)) {
+                  setSaving(true)
+                  const supabase = createClient()
+                  await supabase.from('vehicles').delete().eq('id', initialData.id)
+                  router.push('/admin/vehicles')
+                  router.refresh()
+                }
+              }}
+              disabled={saving}
+            >
+              <Trash2 className="h-4 w-4 mr-2" /> Delete
+            </Button>
+          )}
+        </div>
+        <div className="flex items-center gap-3 mt-4 sm:mt-0">
+          <Button variant="outline" className="border-border text-text-primary" onClick={() => handleSave('draft')} disabled={saving}>
+            Save as Draft
+          </Button>
+          <Button onClick={() => handleSave('published')} disabled={saving} className="bg-accent hover:bg-accent/90 text-white">
+            <Save className="h-4 w-4 mr-2" /> {saving ? 'Saving...' : 'Publish Vehicle'}
+          </Button>
+        </div>
       </div>
 
       {/* Basic Info */}

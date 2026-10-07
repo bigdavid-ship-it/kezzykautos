@@ -23,12 +23,12 @@ export const CONTACT = {
 } as const
 
 export const SOCIAL_LINKS = {
-  // [DEV PLACEHOLDER] — awaiting confirmed social media links
+
   tiktok: 'https://tiktok.com/@kezzykautos',
   facebook: 'https://facebook.com/kezzykautos',
 } as const
 
-// Navigation links
+
 export const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Inventory', href: '/inventory' },
@@ -47,17 +47,15 @@ export const ADMIN_NAV_LINKS = [
   { label: 'Settings', href: '/admin/settings', icon: 'Settings' },
 ] as const
 
-// Vehicle filter options
 export const VEHICLE_TRANSMISSIONS = ['Automatic', 'Manual'] as const
 export const VEHICLE_FUEL_TYPES = ['Petrol', 'Diesel', 'Hybrid', 'Electric'] as const
 export const VEHICLE_BODY_TYPES = ['Sedan', 'SUV', 'Coupe', 'Truck', 'Van', 'Hatchback', 'Convertible', 'Wagon', 'Sport'] as const
 export const VEHICLE_CONDITIONS = ['New', 'Foreign Used', 'Nigerian Used'] as const
 export const VEHICLE_AVAILABILITY = ['Available', 'Sold', 'Reserved', 'Coming Soon'] as const
 
-// Inquiry statuses
+
 export const INQUIRY_STATUSES = ['NEW', 'CONTACTED', 'FOLLOW_UP', 'CLOSED'] as const
 
-// WhatsApp message template
 export const getWhatsAppUrl = (vehicleName?: string) => {
   const phone = CONTACT.whatsapp.replace(/[^0-9]/g, '')
   const message = vehicleName
@@ -66,7 +64,7 @@ export const getWhatsAppUrl = (vehicleName?: string) => {
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 }
 
-// Currency formatter (Nigerian Naira)
+
 export const formatPrice = (price: number): string => {
   return new Intl.NumberFormat('en-NG', {
     style: 'currency',
@@ -76,7 +74,7 @@ export const formatPrice = (price: number): string => {
   }).format(price)
 }
 
-// Slug generator
+
 export const generateSlug = (make: string, model: string, year: number): string => {
   return `${make}-${model}-${year}`
     .toLowerCase()
