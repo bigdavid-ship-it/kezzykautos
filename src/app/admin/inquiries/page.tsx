@@ -69,9 +69,29 @@ export default async function AdminInquiriesPage() {
                           {inquiry.vehicles.year} {inquiry.vehicles.make} {inquiry.vehicles.model}
                         </div>
                       )}
-                      <div className="mt-3 text-body-sm text-text-secondary max-w-sm line-clamp-2">
+                      <div className="mt-3 text-body-sm text-text-primary max-w-sm line-clamp-2">
                         "{inquiry.message}"
                       </div>
+                      
+                      {(inquiry.interested_make || inquiry.budget_range || inquiry.purchase_timeline) && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {(inquiry.interested_make || inquiry.interested_model) && (
+                            <Badge variant="outline" className="text-xs bg-bg-primary">
+                              Looking for: {inquiry.interested_make} {inquiry.interested_model}
+                            </Badge>
+                          )}
+                          {inquiry.budget_range && (
+                            <Badge variant="outline" className="text-xs bg-bg-primary">
+                              Budget: {inquiry.budget_range}
+                            </Badge>
+                          )}
+                          {inquiry.purchase_timeline && (
+                            <Badge variant="outline" className="text-xs bg-bg-primary">
+                              Timeline: {inquiry.purchase_timeline}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
                     </td>
                     <td className="p-4 align-top">
                       <Badge variant={

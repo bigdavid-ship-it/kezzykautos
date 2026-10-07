@@ -58,10 +58,30 @@ export default function ContactPage() {
     setSubmitStatus('idle');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const formData = new FormData(e.currentTarget);
+      const payload = {
+        name: formData.get('name') as string,
+        email: formData.get('email') as string,
+        phone: formData.get('phone') as string,
+        message: formData.get('message') as string,
+        interested_make: formData.get('interested_make') as string || null,
+        interested_model: formData.get('interested_model') as string || null,
+        budget_range: formData.get('budget_range') as string || null,
+        purchase_timeline: formData.get('purchase_timeline') as string || null,
+        type: 'General Contact',
+        status: 'New'
+      };
+
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+      
+      const { error } = await supabase.from('inquiries').insert(payload);
+      if (error) throw error;
+
       setSubmitStatus('success');
       (e.target as HTMLFormElement).reset();
     } catch (error) {
+      console.error(error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -219,7 +239,62 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <div className="space-y-3">
+                <div className="pt-6 pb-2 border-t border-white/5">
+                  <h4 className="text-sm tracking-widest text-accent uppercase font-medium mb-8">Vehicle Preferences (Optional)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="space-y-3">
+                      <label htmlFor="interested_make" className="text-sm tracking-wide text-gray-400">Interested Make</label>
+                      <Input 
+                        id="interested_make" 
+                        name="interested_make" 
+                        placeholder="e.g. Toyota, Mercedes" 
+                        disabled={isSubmitting}
+                        className="bg-transparent border-0 border-b border-white/10 rounded-none px-0 py-4 focus:ring-0 focus:border-accent text-lg placeholder:text-gray-700"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label htmlFor="interested_model" className="text-sm tracking-wide text-gray-400">Interested Model</label>
+                      <Input 
+                        id="interested_model" 
+                        name="interested_model" 
+                        placeholder="e.g. Camry, GLE 450" 
+                        disabled={isSubmitting}
+                        className="bg-transparent border-0 border-b border-white/10 rounded-none px-0 py-4 focus:ring-0 focus:border-accent text-lg placeholder:text-gray-700"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label htmlFor="budget_range" className="text-sm tracking-wide text-gray-400">Estimated Budget</label>
+                      <select 
+                        id="budget_range" 
+                        name="budget_range" 
+                        disabled={isSubmitting}
+                        className="w-full bg-transparent border-0 border-b border-white/10 rounded-none px-0 py-4 focus:ring-0 focus:border-accent text-lg text-white appearance-none"
+                      >
+                        <option value="" className="text-black">Select Budget Range</option>
+                        <option value="Under ₦5m" className="text-black">Under ₦5m</option>
+                        <option value="₦5m - ₦10m" className="text-black">₦5m - ₦10m</option>
+                        <option value="₦10m - ₦20m" className="text-black">₦10m - ₦20m</option>
+                        <option value="Above ₦20m" className="text-black">Above ₦20m</option>
+                      </select>
+                    </div>
+                    <div className="space-y-3">
+                      <label htmlFor="purchase_timeline" className="text-sm tracking-wide text-gray-400">Purchase Timeline</label>
+                      <select 
+                        id="purchase_timeline" 
+                        name="purchase_timeline" 
+                        disabled={isSubmitting}
+                        className="w-full bg-transparent border-0 border-b border-white/10 rounded-none px-0 py-4 focus:ring-0 focus:border-accent text-lg text-white appearance-none"
+                      >
+                        <option value="" className="text-black">Select Timeline</option>
+                        <option value="Ready to buy now" className="text-black">Ready to buy now</option>
+                        <option value="Within 1 month" className="text-black">Within 1 month</option>
+                        <option value="Just browsing" className="text-black">Just browsing</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-6 border-t border-white/5">
                   <label htmlFor="message" className="text-sm tracking-wide text-gray-400">Message *</label>
                   <Textarea 
                     id="message" 
