@@ -29,9 +29,17 @@ export default async function AdminDashboard() {
     .order('created_at', { ascending: false })
     .limit(5)
 
+  // Fetch visitors
+  const { data: settings } = await supabase
+    .from('settings')
+    .select('total_visitors')
+    .eq('id', 1)
+    .single()
+
   const stats = [
     { label: 'Total Vehicles', value: vehicleCount?.toString() || '0', icon: Car },
     { label: 'New Inquiries', value: inquiryCount?.toString() || '0', icon: MessageSquare },
+    { label: 'Website Visitors', value: settings?.total_visitors?.toString() || '0', icon: Eye },
   ]
 
   return (
@@ -41,7 +49,7 @@ export default async function AdminDashboard() {
         <p className="text-text-secondary mt-1">Overview of your dealership</p>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {stats.map((stat) => (
           <div key={stat.label} className="bg-bg-surface border border-border p-6 rounded-card">
             <div className="flex items-center justify-between mb-4">
