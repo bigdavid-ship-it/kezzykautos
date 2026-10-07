@@ -1,49 +1,20 @@
-﻿'use client'
-
 import Link from 'next/link'
-import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
-import { ArrowRight, ChevronRight } from 'lucide-react'
-import { SectionHeader } from './SectionHeader'
+import { ArrowRight } from 'lucide-react'
 import { VehicleCard } from './VehicleCard'
-import { VehicleGridSkeleton } from '@/components/ui/LoadingState'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import type { Vehicle } from '@/lib/types/database'
 
-export function FeaturedVehicles() {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchFeatured() {
-      try {
-        const supabase = createClient()
-        const { data, error } = await supabase
-          .from('vehicles')
-          .select('*')
-          .eq('featured', true)
-          .eq('availability', 'Available')
-          .order('created_at', { ascending: false })
-          .limit(4)
-
-        if (error) {
-          console.error('Error fetching featured vehicles:', error)
-          // If table doesn't exist yet, just show empty
-          setVehicles([])
-        } else {
-          setVehicles(data || [])
-        }
-      } catch {
-        setVehicles([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchFeatured()
-  }, [])
+export async function FeaturedVehicles() {
+  const supabase = await createClient()
+  
+  const { data: vehicles } = await supabase
+    .from('vehicles')
+    .select('*')
+    .eq('featured', true)
+    .eq('availability', 'Available')
+    .order('created_at', { ascending: false })
+    .limit(4)
 
   return (
     <section className="bg-bg-primary py-24 border-t border-white/5">
@@ -58,17 +29,7 @@ export function FeaturedVehicles() {
           </Link>
         </div>
 
-        {loading ? (
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
-            {[0, 1, 2, 3].map((i) => (
-              <div key={i}>
-                <div className="aspect-[4/3] bg-white/5 animate-pulse rounded-lg" />
-                <div className="h-4 w-2/3 bg-white/5 animate-pulse rounded mt-4" />
-                <div className="h-4 w-1/3 bg-white/5 animate-pulse rounded mt-2" />
-              </div>
-            ))}
-          </div>
-        ) : vehicles.length === 0 ? (
+        {!vehicles || vehicles.length === 0 ? (
           <EmptyState
             title="Coming Soon"
             description="Our premium vehicle collection is being prepared."
@@ -76,7 +37,7 @@ export function FeaturedVehicles() {
         ) : (
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
             {vehicles.map((vehicle, index) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} index={index} />
+              <VehicleCard key={vehicle.id} vehicle={vehicle as Vehicle} index={index} />
             ))}
           </div>
         )}

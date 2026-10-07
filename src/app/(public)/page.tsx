@@ -9,6 +9,8 @@ export const metadata: Metadata = {
     'Kezzyk Autos — your trusted destination for premium vehicles in Nigeria. Quality cars, transparent pricing, and exceptional service.',
 }
 
+export const revalidate = 60
+
 export default function HomePage() {
   return (
     <>
