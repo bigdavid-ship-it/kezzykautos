@@ -187,7 +187,7 @@ export default function ContactPage() {
                     <Input 
                       id="name" 
                       name="name" 
-                      placeholder="John Doe" 
+                      placeholder="Kezzyk Autos Client" 
                       required 
                       disabled={isSubmitting}
                       className="bg-transparent border-0 border-b border-white/10 rounded-none px-0 py-4 focus:ring-0 focus:border-accent text-lg placeholder:text-gray-700"
@@ -199,7 +199,7 @@ export default function ContactPage() {
                       id="email" 
                       name="email" 
                       type="email" 
-                      placeholder="john@example.com" 
+                      placeholder="client@kezzykautos.com" 
                       required 
                       disabled={isSubmitting}
                       className="bg-transparent border-0 border-b border-white/10 rounded-none px-0 py-4 focus:ring-0 focus:border-accent text-lg placeholder:text-gray-700"
