@@ -18,11 +18,41 @@ import type { Vehicle } from '@/lib/types/database'
 const ITEMS_PER_PAGE = 12
 
 const SORT_OPTIONS = [
+  { value: 'shuffle', label: 'Shuffled' },
   { value: 'newest', label: 'Newest Added' },
   { value: 'price_asc', label: 'Price: Low to High' },
   { value: 'price_desc', label: 'Price: High to Low' },
   { value: 'year_desc', label: 'Year: Newest' },
 ]
+
+// One random seed per browser session, so the shuffled order stays the same
+// while a visitor pages through results or returns from a vehicle page,
+// but is different on their next visit.
+function getShuffleSeed(): number {
+  const KEY = 'inventory_shuffle_seed'
+  const existing = sessionStorage.getItem(KEY)
+  if (existing) return parseInt(existing, 10)
+  const seed = Math.floor(Math.random() * 2 ** 31)
+  sessionStorage.setItem(KEY, seed.toString())
+  return seed
+}
+
+// Small deterministic PRNG (mulberry32) + Fisher-Yates shuffle
+function seededShuffle<T>(items: T[], seed: number): T[] {
+  let a = seed
+  const random = () => {
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+  const result = [...items]
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1))
+    ;[result[i], result[j]] = [result[j], result[i]]
+  }
+  return result
+}
 
 function InventoryContent() {
   const searchParams = useSearchParams()
@@ -41,7 +71,7 @@ function InventoryContent() {
   const year = searchParams.get('year') || ''
   const price = searchParams.get('price') || ''
   const bodyType = searchParams.get('body_type') || ''
-  const sort = searchParams.get('sort') || 'newest'
+  const sort = searchParams.get('sort') || 'shuffle'
   const page = parseInt(searchParams.get('page') || '1', 10)
 
   const fetchVehicles = useCallback(async () => {
@@ -73,6 +103,27 @@ function InventoryContent() {
         query = query.eq('body_type', bodyType)
       }
 
+      const from = (page - 1) * ITEMS_PER_PAGE
+      const to = from + ITEMS_PER_PAGE - 1
+
+      if (sort === 'shuffle') {
+        // Fetch every matching vehicle in a stable base order, shuffle with the
+        // session seed, then paginate locally so pages don't overlap.
+        const { data, error, count } = await query.order('id', { ascending: true })
+
+        if (error) {
+          if (error.code === '42P01') {
+            throw new Error('Database tables are not set up yet.')
+          }
+          throw error
+        }
+
+        const shuffled = seededShuffle((data || []) as Vehicle[], getShuffleSeed())
+        setVehicles(shuffled.slice(from, to + 1))
+        setTotalCount(count ?? shuffled.length)
+        return
+      }
+
       // Apply sorting
       if (sort === 'price_asc') {
         query = query.order('price', { ascending: true })
@@ -85,8 +136,6 @@ function InventoryContent() {
       }
 
       // Apply pagination
-      const from = (page - 1) * ITEMS_PER_PAGE
-      const to = from + ITEMS_PER_PAGE - 1
       query = query.range(from, to)
 
       const { data, error, count } = await query
