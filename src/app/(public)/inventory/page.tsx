@@ -9,6 +9,7 @@ import { VehicleGridSkeleton } from '@/components/ui/LoadingState'
 import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Input'
 import { motion } from 'framer-motion'
+import { Shuffle } from 'lucide-react'
 import type { Vehicle } from '@/lib/types/database'
 
 // Note: Next.js 14 does not allow `export const metadata` in a 'use client' file.
@@ -25,16 +26,13 @@ const SORT_OPTIONS = [
   { value: 'year_desc', label: 'Year: Newest' },
 ]
 
-// One random seed per browser session, so the shuffled order stays the same
-// while a visitor pages through results or returns from a vehicle page,
-// but is different on their next visit.
+// A new random seed every time the page is loaded or refreshed, so visitors
+// see a fresh order each visit. It lives at module level, so the order stays
+// the same while paging through results or coming back from a vehicle page
+// (in-app navigation), and pages never repeat or skip a car.
+const pageLoadSeed = Math.floor(Math.random() * 2 ** 31)
 function getShuffleSeed(): number {
-  const KEY = 'inventory_shuffle_seed'
-  const existing = sessionStorage.getItem(KEY)
-  if (existing) return parseInt(existing, 10)
-  const seed = Math.floor(Math.random() * 2 ** 31)
-  sessionStorage.setItem(KEY, seed.toString())
-  return seed
+  return pageLoadSeed
 }
 
 // Small deterministic PRNG (mulberry32) + Fisher-Yates shuffle
@@ -71,6 +69,7 @@ function InventoryContent() {
   const year = searchParams.get('year') || ''
   const price = searchParams.get('price') || ''
   const bodyType = searchParams.get('body_type') || ''
+  const [shuffleSeed, setShuffleSeed] = useState(() => Math.floor(Math.random() * 2 ** 31))
   const sort = searchParams.get('sort') || 'shuffle'
   const page = parseInt(searchParams.get('page') || '1', 10)
 
@@ -118,7 +117,7 @@ function InventoryContent() {
           throw error
         }
 
-        const shuffled = seededShuffle((data || []) as Vehicle[], getShuffleSeed())
+        const shuffled = seededShuffle((data || []) as Vehicle[], shuffleSeed)
         setVehicles(shuffled.slice(from, to + 1))
         setTotalCount(count ?? shuffled.length)
         return
@@ -155,7 +154,7 @@ function InventoryContent() {
     } finally {
       setIsLoading(false)
     }
-  }, [supabase, search, make, year, price, bodyType, sort, page])
+  }, [supabase, search, make, year, price, bodyType, sort, page, shuffleSeed])
 
   useEffect(() => {
     fetchVehicles()
@@ -204,8 +203,23 @@ function InventoryContent() {
         <SearchFilters resultCount={totalCount} />
 
         {/* Sort Controls */}
-        <div className="flex justify-end mb-6">
-          <div className="w-full md:w-64">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setShuffleSeed(Math.floor(Math.random() * 2 ** 31))
+              if (sort !== 'shuffle') {
+                handleSortChange('shuffle')
+              }
+            }}
+            className="flex items-center gap-2 text-xs uppercase tracking-wider text-text-secondary hover:text-white"
+          >
+            <Shuffle className="h-3.5 w-3.5 text-accent" />
+            Shuffle Vehicles
+          </Button>
+
+          <div className="w-full sm:w-64">
             <Select
               options={SORT_OPTIONS}
               value={sort}

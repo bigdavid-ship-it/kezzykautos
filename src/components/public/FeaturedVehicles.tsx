@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { VehicleCard } from './VehicleCard'
+import { ShuffledVehicleGrid } from './ShuffledVehicleGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { createClient } from '@/lib/supabase/server'
 import type { Vehicle } from '@/lib/types/database'
@@ -14,7 +15,6 @@ export async function FeaturedVehicles() {
     .eq('featured', true)
     .eq('availability', 'Available')
     .order('created_at', { ascending: false })
-    .limit(4)
 
   return (
     <section className="bg-bg-primary py-24 border-t border-white/5">
@@ -35,11 +35,7 @@ export async function FeaturedVehicles() {
             description="Our premium vehicle collection is being prepared."
           />
         ) : (
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-10 md:gap-y-16">
-            {vehicles.map((vehicle, index) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle as Vehicle} index={index} />
-            ))}
-          </div>
+          <ShuffledVehicleGrid vehicles={vehicles as Vehicle[]} limit={4} />
         )}
       </div>
     </section>
