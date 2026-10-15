@@ -9,7 +9,6 @@ import { VehicleGridSkeleton } from '@/components/ui/LoadingState'
 import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Input'
 import { motion } from 'framer-motion'
-import { Shuffle } from 'lucide-react'
 import type { Vehicle } from '@/lib/types/database'
 
 // Note: Next.js 14 does not allow `export const metadata` in a 'use client' file.
@@ -25,15 +24,6 @@ const SORT_OPTIONS = [
   { value: 'price_desc', label: 'Price: High to Low' },
   { value: 'year_desc', label: 'Year: Newest' },
 ]
-
-// A new random seed every time the page is loaded or refreshed, so visitors
-// see a fresh order each visit. It lives at module level, so the order stays
-// the same while paging through results or coming back from a vehicle page
-// (in-app navigation), and pages never repeat or skip a car.
-const pageLoadSeed = Math.floor(Math.random() * 2 ** 31)
-function getShuffleSeed(): number {
-  return pageLoadSeed
-}
 
 // Small deterministic PRNG (mulberry32) + Fisher-Yates shuffle
 function seededShuffle<T>(items: T[], seed: number): T[] {
@@ -203,22 +193,7 @@ function InventoryContent() {
         <SearchFilters resultCount={totalCount} />
 
         {/* Sort Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setShuffleSeed(Math.floor(Math.random() * 2 ** 31))
-              if (sort !== 'shuffle') {
-                handleSortChange('shuffle')
-              }
-            }}
-            className="flex items-center gap-2 text-xs uppercase tracking-wider text-text-secondary hover:text-white"
-          >
-            <Shuffle className="h-3.5 w-3.5 text-accent" />
-            Shuffle Vehicles
-          </Button>
-
+        <div className="flex justify-end mb-6">
           <div className="w-full sm:w-64">
             <Select
               options={SORT_OPTIONS}
